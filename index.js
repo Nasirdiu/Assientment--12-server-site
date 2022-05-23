@@ -101,6 +101,11 @@ async function run() {
       res.send(result);
     });
     //order
+    app.get("/order", async (req, res) => {
+      const order = await orderCollection.find({}).toArray();
+      res.send(order);
+    });
+
     app.post("/orderProduct", async (req, res) => {
       const data = req.body;
       const result = await orderCollection.insertOne(data);
