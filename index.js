@@ -4,7 +4,7 @@ const app = express();
 const port = process.env.PORT || 5000;
 require("dotenv").config();
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
-const { send } = require("express/lib/response");
+// const { send } = require("express/lib/response");
 
 app.use(
   cors({
@@ -29,6 +29,7 @@ async function run() {
     const productCollection = client.db("car-auto-parts").collection("product");
     const reviewCollection = client.db("car-auto-parts").collection("review");
     const userCollection = client.db("car-auto-parts").collection("users");
+    const orderCollection = client.db("car-auto-parts").collection("order");
 
     //Product
     app.get("/product", async (req, res) => {
@@ -47,6 +48,13 @@ async function run() {
       const query = { _id: ObjectId(id) };
       const result = await productCollection.findOne(query);
       res.send(result);
+    });
+    //delete
+    app.delete("/product/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const products = await productCollection.deleteOne(query);
+      res.send(products);
     });
     //review
     app.get("/review", async (req, res) => {
@@ -79,7 +87,7 @@ async function run() {
         const isAdmin = user.role === "admin";
         res.send({ admin: isAdmin });
       });
-      
+
       app.put("/user/admin/:email", async (req, res) => {
         const email = req.params.email;
         const filter = { email: email };
@@ -90,6 +98,12 @@ async function run() {
         res.send(result);
       });
       const result = await userCollection.updateOne(filter, updateDoc, options);
+      res.send(result);
+    });
+    //order
+    app.post("/orderProduct", async (req, res) => {
+      const data = req.body;
+      const result = await orderCollection.insertOne(data);
       res.send(result);
     });
   } finally {
