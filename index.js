@@ -113,6 +113,14 @@ async function run() {
       const result = await orderCollection.insertOne(data);
       res.send(result);
     });
+    app.delete("/order/:id", async (req, res) => {
+      const id = req.params.id;
+      console.log(id);
+      const query = { _id: ObjectId(id) };
+      const order = await orderCollection.deleteOne(query);
+      res.send(order);
+    });
+   
     //payment system
 
     app.post("/create-payment-intent", async (req, res) => {
