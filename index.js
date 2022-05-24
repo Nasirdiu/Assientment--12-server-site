@@ -101,6 +101,12 @@ async function run() {
       const result = await userCollection.updateOne(filter, updateDoc, options);
       res.send(result);
     });
+    app.delete("/user/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const user = await userCollection.deleteOne(query);
+      res.send(user);
+    });
 
     //order option
 
