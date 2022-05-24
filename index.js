@@ -6,7 +6,6 @@ require("dotenv").config();
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 //payment
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
-// const { send } = require("express/lib/response");
 
 app.use(
   cors({
@@ -102,30 +101,38 @@ async function run() {
       const result = await userCollection.updateOne(filter, updateDoc, options);
       res.send(result);
     });
-    //order
+
+    //order option
+
+    //user email order
     app.get("/order", async (req, res) => {
+      const customerEmail = req.query.customerEmail;
+      const query = { customerEmail: customerEmail };
+      const order = await orderCollection.find(query).toArray();
+      return res.send(order);
+    });
+    //all order
+    app.get("/orders", async (req, res) => {
       const order = await orderCollection.find({}).toArray();
       res.send(order);
     });
-
     app.post("/orderProduct", async (req, res) => {
       const data = req.body;
       const result = await orderCollection.insertOne(data);
       res.send(result);
     });
+
     app.delete("/order/:id", async (req, res) => {
       const id = req.params.id;
-      console.log(id);
       const query = { _id: ObjectId(id) };
       const order = await orderCollection.deleteOne(query);
       res.send(order);
     });
-   
+
     //payment system
 
     app.post("/create-payment-intent", async (req, res) => {
       const service = req.body;
-      console.log(service);
       const price = service.price;
       const amount = price * 100;
       const paymentIntent = await stripe.paymentIntents.create({
@@ -144,7 +151,7 @@ async function run() {
       const orders = await orderCollection.findOne(query);
       res.send(orders);
     });
-    app.patch("/order/:id",  async (req, res) => {
+    app.patch("/order/:id", async (req, res) => {
       const id = req.params.id;
       const payment = req.body;
       const filter = { _id: ObjectId(id) };
@@ -155,10 +162,7 @@ async function run() {
         },
       };
       const result = await paymentCollection.insertOne(payment);
-      const updateBooking = await orderCollection.updateOne(
-        filter,
-        updateDoc
-      );
+      const updateBooking = await orderCollection.updateOne(filter, updateDoc);
 
       res.send(updateDoc);
     });
