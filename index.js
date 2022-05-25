@@ -81,12 +81,6 @@ async function run() {
       const result = await reviewCollection.insertOne(data);
       res.send(result);
     });
-    //user admin
-    app.get("/user", async (req, res) => {
-      const users = await userCollection.find().toArray();
-      res.send(users);
-    });
-
     //user profile update
 
     app.get("/userprofile/:email", async (req, res) => {
@@ -107,6 +101,13 @@ async function run() {
       const result = await userCollection.updateOne(filter, updateDoc, options);
       res.send(result);
     });
+    //user admin
+    app.get("/user", async (req, res) => {
+      const users = await userCollection.find().toArray();
+      res.send(users);
+    });
+
+    
 
     app.put("/user/:email", async (req, res) => {
       const email = req.params.email;

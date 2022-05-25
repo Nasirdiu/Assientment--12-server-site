@@ -17,5 +17,8 @@
     "express": "^4.18.1",
     "mongodb": "^4.6.0",
     "stripe": "^9.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.16"
   }
 }
