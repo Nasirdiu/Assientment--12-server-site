@@ -35,8 +35,13 @@ async function run() {
     const profileCollection = client.db("car-auto-parts").collection("profile");
 
     //profile
-    app.post("/uploadProfile", async (req, res) => {
+    app.get("/profile", async (req, res) => {
+      const profile = await profileCollection.find({}).toArray();
+      res.send(profile);
+    });
+    app.put("/uploadProfile", async (req, res) => {
       const data = req.body;
+      const filter = { title: "Random Harvest" };
       const result = await profileCollection.insertOne(data);
       res.send(result);
     });
@@ -81,6 +86,28 @@ async function run() {
       const users = await userCollection.find().toArray();
       res.send(users);
     });
+
+    //user profile update
+
+    app.get("/userprofile/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const result = await userCollection.findOne(query);
+      res.send(result);
+    });
+
+    app.put("/userprofile/:id", async (req, res) => {
+      const id = req.params.id;
+      const data = req.body;
+      const filter = { _id: ObjectId(id) };
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: data,
+      };
+      const result = await userCollection.updateOne(filter, updateDoc, options);
+      res.send(result);
+    });
+
     app.put("/user/:email", async (req, res) => {
       const email = req.params.email;
       const user = req.body;
@@ -93,7 +120,7 @@ async function run() {
       app.get("/admin/:email", async (req, res) => {
         const email = req.params.email;
         const user = await userCollection.findOne({ email: email });
-        const isAdmin = user.role === "admin";
+        const isAdmin = user.role == "admin";
         res.send({ admin: isAdmin });
       });
 
