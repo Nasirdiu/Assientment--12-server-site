@@ -32,6 +32,14 @@ async function run() {
     const userCollection = client.db("car-auto-parts").collection("users");
     const orderCollection = client.db("car-auto-parts").collection("order");
     const paymentCollection = client.db("car-auto-parts").collection("payment");
+    const profileCollection = client.db("car-auto-parts").collection("profile");
+
+    //profile
+    app.post("/uploadProfile", async (req, res) => {
+      const data = req.body;
+      const result = await profileCollection.insertOne(data);
+      res.send(result);
+    });
 
     //Product
     app.get("/product", async (req, res) => {
