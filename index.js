@@ -15,8 +15,7 @@ app.use(
 
 app.use(express.json());
 
-//car-auto-parts
-//r1jL42Ium8m6nwng
+
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.7n8xf.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, {
